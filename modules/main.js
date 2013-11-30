@@ -59,8 +59,7 @@ FullscreenObserver.prototype = {
 		aMutations.forEach(function(aMutation) {
 			if (aMutation.type != 'attributes')
 				return;
-			if (aMutation.attributeName == 'sizemode' &&
-				this.window.document.documentElement.getAttribute('sizemode') == 'fullscreen')
+			if (aMutation.attributeName == 'sizemode')
 				this.window.setTimeout((function() {
 					this.onSizeModeChange();
 				}).bind(this), 10);
@@ -69,9 +68,12 @@ FullscreenObserver.prototype = {
 
 	onSizeModeChange : function FullscreenObserver_onSizeModeChange()
 	{
-		var d = this.window.document;
+		var w = this.window:
+		var d = w.document;
+		if (d.documentElement.getAttribute('sizemode') != 'fullscreen')
+			return;
 
-		var toolbox = this.window.gNavToolbox;
+		var toolbox = w.gNavToolbox;
 		toolbox.style.marginTop = -toolbox.getBoundingClientRect().height + 'px';
 
 		var windowControls = d.getElementById('window-controls');
@@ -109,8 +111,7 @@ function handleWindow(aWindow)
 		baseStyles.delete(aWindow);
 		platformStyles.delete(aWindow);
 
-		var observer = fullscreenObservers.get(aWindow);
-		observer.destroy();
+		fullscreenObservers.get(aWindow).destroy();
 		fullscreenObservers.delete(aWindow);
 	}, false);
 }
@@ -123,16 +124,13 @@ function shutdown()
 	WindowManager.getWindows(TYPE_BROWSER).forEach(function(aWindow) {
 		aWindow.TabsInTitlebar.allowedBy('tabsOnBottom', true);
 
-		var base = baseStyles.get(aWindow);
-		aWindow.document.removeChild(base);
+		aWindow.document.removeChild(baseStyles.get(aWindow));
 		baseStyles.delete(aWindow);
 
-		var platform = platformStyles.get(aWindow);
-		aWindow.document.removeChild(platform);
+		aWindow.document.removeChild(platformStyles.get(aWindow));
 		platformStyles.delete(aWindow);
 
-		var observer = fullscreenObservers.get(aWindow);
-		observer.destroy();
+		fullscreenObservers.get(aWindow).destroy();
 		fullscreenObservers.delete(aWindow);
 	});
 
