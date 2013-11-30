@@ -1,9 +1,1 @@
-content	tabsonbottom	content/
-
-overlay	chrome://browser/content/browser.xul	chrome://tabsonbottom/content/tabsonbottom.xul
-
 skin	tabsonbottom	classic/1.0	skin/
-
-override chrome://tabsonbottom/skin/platform.css	chrome://tabsonbottom/skin/Darwin.css	os=Darwin
-override chrome://tabsonbottom/skin/platform.css	chrome://tabsonbottom/skin/Linux.css	os=Linux
-override chrome://tabsonbottom/skin/platform.css	chrome://tabsonbottom/skin/WINNT.css	os=WINNT
