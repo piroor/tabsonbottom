@@ -1,0 +1,25 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/**
+ * Apply "tabs on bottom" appearance on Australis.
+ */
+:root
+  #nav-bar:not(:-moz-lwtheme),
+:root
+  #nav-bar:not(:-moz-lwtheme):-moz-window-inactive {
+	background: transparent;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	box-shadow: none;
+	/**
+	 * With Australis, the "back" button in the navigation toolbar is
+	 * unexpectedly overwrapped on the border of the expanded titlebar.
+	 * This negative margin solves the overwrapping.
+	 */
+	margin-top: -4px;
+}
