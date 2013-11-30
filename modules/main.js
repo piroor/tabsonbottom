@@ -22,8 +22,74 @@ function addStyleSheet(aURL, aWindow)
 	return pi;
 }
 
+function FullscreenObserver(aWindow) {
+	this.window = aWindow;
+	this.init();
+}
+FullscreenObserver.prototype = {
+	get MutationObserver()
+	{
+		var w = this.window;
+		return w.MutationObserver || w.MozMutationObserver;
+	},
+
+	init : function FullscreenObserver_onInit() 
+	{
+		if (!this.MutationObserver)
+			return;
+		this.observer = new this.MutationObserver((function(aMutations, aObserver) {
+			this.onMutation(aMutations, aObserver);
+		}).bind(this));
+		this.observer.observe(this.window.document.documentElement, { attributes : true });
+
+		this.onSizeModeChange();
+	},
+
+	destroy : function FullscreenObserver_destroy()
+	{
+		if (this.observer) {
+			this.observer.disconnect();
+			delete this.observer;
+		}
+		delete this.window;
+	},
+
+	onMutation : function FullscreenObserver_onMutation(aMutations, aObserver) 
+	{
+		aMutations.forEach(function(aMutation) {
+			if (aMutation.type != 'attributes')
+				return;
+			if (aMutation.attributeName == 'sizemode' &&
+				this.window.document.documentElement.getAttribute('sizemode') == 'fullscreen')
+				this.window.setTimeout((function() {
+					this.onSizeModeChange();
+				}).bind(this), 10);
+		}, this);
+	},
+
+	onSizeModeChange : function FullscreenObserver_onSizeModeChange()
+	{
+		var d = this.window.document;
+
+		var toolbox = this.window.gNavToolbox;
+		toolbox.style.marginTop = -toolbox.getBoundingClientRect().height + 'px';
+
+		var windowControls = d.getElementById('window-controls');
+		var navigationToolbar = d.getElementById('nav-bar');
+		if (!windowControls ||
+			!navigationToolbar ||
+			windowControls.parentNode == navigationToolbar)
+			return;
+
+		// the location bar is flex=1, so we should not apply it.
+		// windowControls.setAttribute('flex', '1');
+		navigationToolbar.appendChild(windowControls);
+	}
+};
+
 var baseStyles = new WeakMap();
 var platformStyles = new WeakMap();
+var fullscreenObservers = new WeakMap();
 
 function handleWindow(aWindow)
 {
@@ -35,11 +101,17 @@ function handleWindow(aWindow)
 
 	baseStyles.set(aWindow, addStyleSheet(baseStyleURL, aWindow));
 	platformStyles.set(aWindow, addStyleSheet(platformStyleURL, aWindow));
+	fullscreenObservers.set(aWindow, new FullscreenObserver(aWindow));
 
 	aWindow.addEventListener('unload', function onUnload() {
 		aWindow.addEventListener('unload', onUnload, false);
+
 		baseStyles.delete(aWindow);
 		platformStyles.delete(aWindow);
+
+		var observer = fullscreenObservers.get(aWindow);
+		observer.destroy();
+		fullscreenObservers.delete(aWindow);
 	}, false);
 }
 
@@ -54,9 +126,14 @@ function shutdown()
 		var base = baseStyles.get(aWindow);
 		aWindow.document.removeChild(base);
 		baseStyles.delete(aWindow);
+
 		var platform = platformStyles.get(aWindow);
 		aWindow.document.removeChild(platform);
 		platformStyles.delete(aWindow);
+
+		var observer = fullscreenObservers.get(aWindow);
+		observer.destroy();
+		fullscreenObservers.delete(aWindow);
 	});
 
 	WindowManager = undefined;
