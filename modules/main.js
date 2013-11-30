@@ -33,8 +33,8 @@ function handleWindow(aWindow)
 
 	aWindow.TabsInTitlebar.allowedBy('tabsOnBottom', false);
 
-	baseStyles.set(aWindow, addStyleSheet(baseStyleURL));
-	platformStyles.set(aWindow, addStyleSheet(platformStyleURL));
+	baseStyles.set(aWindow, addStyleSheet(baseStyleURL, aWindow));
+	platformStyles.set(aWindow, addStyleSheet(platformStyleURL, aWindow));
 
 	aWindow.addEventListener('unload', function onUnload() {
 		aWindow.addEventListener('unload', onUnload, false);
