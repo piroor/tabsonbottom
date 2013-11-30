@@ -12,7 +12,7 @@
 #main-window
   #browser-panel
   > #navigator-toolbox
-  > #nav-bar:not(:-moz-lwtheme),
+  > #nav-bar:not(:-moz-lwtheme):not(:-moz-window-inactive),
 #main-window
   #browser-panel
   > #navigator-toolbox
@@ -30,7 +30,7 @@
 #main-window:not([sizemode="fullscreen"])
   #browser-panel
   > #navigator-toolbox
-  > #nav-bar:not(:-moz-lwtheme),
+  > #nav-bar:not(:-moz-lwtheme):not(:-moz-window-inactive),
 #main-window:not([sizemode="fullscreen"])
   #browser-panel
   > #navigator-toolbox
