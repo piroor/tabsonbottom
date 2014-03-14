@@ -1,10 +1,10 @@
 /**
  * @fileOverview Loader module for restartless addons
  * @author       YUKI "Piro" Hiroshi
- * @version      6
+ * @version      10
  *
  * @license
- *   The MIT License, Copyright (c) 2010-2012 YUKI "Piro" Hiroshi.
+ *   The MIT License, Copyright (c) 2010-2014 YUKI "Piro" Hiroshi.
  *   https://github.com/piroor/restartless/blob/master/license.txt
  * @url http://github.com/piroor/restartless
  */
@@ -19,12 +19,30 @@ var Application = (function() {
 				.getService(Components.interfaces.steelIApplication);
 	return null;
 })();
+// import base64 utilities from the js code module namespace
+try {
+	var { atob, btoa } = Components.utils.import('resource://gre/modules/Services.jsm', {});
+} catch(e) {
+	Components.utils.reportError(new Error('failed to load Services.jsm'));
+}
+try {
+	var { console } = Components.utils.import('resource://gre/modules/devtools/Console.jsm', {});
+} catch(e) {
+	Components.utils.reportError(new Error('failed to load Console.jsm'));
+}
 var _namespacePrototype = {
 		Cc : Components.classes,
 		Ci : Components.interfaces,
 		Cu : Components.utils,
 		Cr : Components.results,
-		Application : Application
+		Application : Application,
+		console : this.console,
+		btoa    : function(aInput) {
+			return btoa(aInput);
+		},
+		atob    : function(aInput) {
+			return atob(aInput);
+		}
 	};
 var _namespaces;
 
