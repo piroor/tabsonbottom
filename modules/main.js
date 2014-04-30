@@ -90,7 +90,7 @@ function getTabStrip(aTabBrowser) {
 	var strip = aTabBrowser.mStrip;
 	return (strip && strip instanceof Ci.nsIDOMElement) ?
 			strip :
-			this.evaluateXPath(
+			evaluateXPath(
 				'ancestor::xul:toolbar[1]',
 				aTabBrowser.tabContainer,
 				Ci.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE
