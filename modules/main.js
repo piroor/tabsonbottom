@@ -96,6 +96,20 @@ function getTabStrip(aTabBrowser) {
 				Ci.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue || aTabBrowser.tabContainer.parentNode;
 }
+function getTab(aEvent) {
+	return evaluateXPath(
+		'ancestor-or-self::xul:tab',
+		aEvent.originalTarget || aEvent.target,
+		Ci.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE
+	).singleNodeValue;
+}
+function getClickable(aEvent) {
+	return evaluateXPath(
+		'ancestor-or-self::*[contains(" button toolbarbutton scrollbar nativescrollbar popup menupopup panel tooltip splitter textbox ", concat(" ", local-name(), " "))]',
+		aEvent.originalTarget,
+		Ci.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE
+	).singleNodeValue;
+}
 var NSResolver = {
 	lookupNamespaceURI : function(aPrefix) {
 		switch (aPrefix) {
@@ -140,6 +154,13 @@ function onMozMouseHittest(aEvent) {
 	aEvent.stopPropagation();
 }
 
+function onDoubleClick(aEvent) {
+	if (!getTab(aEvent) && !getClickable(aEvent)) {
+		aEvent.view.BrowserOpenTab();
+		aEvent.stopPropagation();
+	}
+}
+
 var baseStyles = new WeakMap();
 var platformStyles = new WeakMap();
 var fullscreenObservers = new WeakMap();
@@ -157,11 +178,13 @@ function handleWindow(aWindow) {
 
 	var strip = getTabStrip(aWindow.gBrowser);
 	strip.addEventListener('MozMouseHittest', onMozMouseHittest, true); // to block default behaviors of the tab bar
+	strip.addEventListener('dblclick', onDoubleClick, true);
 
 	aWindow.addEventListener('unload', function onUnload() {
 		aWindow.addEventListener('unload', onUnload, false);
 
 		strip.removeEventListener('MozMouseHittest', onMozMouseHittest, true);
+		strip.removeEventListener('dblclick', onDoubleClick, true);
 
 		baseStyles.delete(aWindow);
 		platformStyles.delete(aWindow);
