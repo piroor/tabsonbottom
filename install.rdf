@@ -9,6 +9,8 @@
                    em:creator="YUKI &quot;Piro&quot; Hiroshi"
                    em:description="Applies &quot;Tabs on Bottom&quot; appearance."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/_tabsonbottom.html.en"
+                   em:optionsURL="chrome://tabsonbottom/content/config.xul"
+                   em:optionsType="2"
                    em:bootstrap="true"
                    em:type="2">
 

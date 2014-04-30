@@ -3,6 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 load('lib/WindowManager');
+load('lib/prefs');
+
+var myPrefs = prefs.createStore('extensions.tabsonbottom@piro.sakura.ne.jp.');
+myPrefs.define('newTabByDblclick', true);
 
 Cu.import('resource://gre/modules/Services.jsm');
 
@@ -150,11 +154,15 @@ function evaluateXPath(aExpression, aContext, aType) {
 }
 
 function onMozMouseHittest(aEvent) {
+	if (!myPrefs.newTabByDblclick)
+		return;
 	// block default behaviors of the tab bar (dragging => window move, etc.)
 	aEvent.stopPropagation();
 }
 
 function onDoubleClick(aEvent) {
+	if (!myPrefs.newTabByDblclick)
+		return;
 	if (!getTab(aEvent) && !getClickable(aEvent)) {
 		aEvent.view.BrowserOpenTab();
 		aEvent.stopPropagation();
@@ -217,6 +225,9 @@ function shutdown() {
 	});
 
 	WindowManager = undefined;
+	myPrefs.destroy();
+	myPrefs = undefined;
+	prefs = undefined;
 	baseStyles = undefined;
 	platformStyles = undefined;
 }
