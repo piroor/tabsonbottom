@@ -11,8 +11,7 @@ const TYPE_BROWSER = 'navigator:browser';
 var baseStyleURL = 'chrome://tabsonbottom/skin/base.css';
 var platformStyleURL = 'chrome://tabsonbottom/skin/' + Services.appinfo.OS + '.css';
 
-function addStyleSheet(aURL, aWindow)
-{
+function addStyleSheet(aURL, aWindow) {
 	var d = aWindow.document;
 	var pi = d.createProcessingInstruction(
 				'xml-stylesheet',
@@ -27,14 +26,12 @@ function FullscreenObserver(aWindow) {
 	this.init();
 }
 FullscreenObserver.prototype = {
-	get MutationObserver()
-	{
+	get MutationObserver() {
 		var w = this.window;
 		return w.MutationObserver || w.MozMutationObserver;
 	},
 
-	init : function FullscreenObserver_onInit() 
-	{
+	init : function FullscreenObserver_onInit() {
 		if (!this.MutationObserver)
 			return;
 		this.observer = new this.MutationObserver((function(aMutations, aObserver) {
@@ -45,8 +42,7 @@ FullscreenObserver.prototype = {
 		this.onSizeModeChange();
 	},
 
-	destroy : function FullscreenObserver_destroy()
-	{
+	destroy : function FullscreenObserver_destroy() {
 		if (this.observer) {
 			this.observer.disconnect();
 			delete this.observer;
@@ -54,8 +50,7 @@ FullscreenObserver.prototype = {
 		delete this.window;
 	},
 
-	onMutation : function FullscreenObserver_onMutation(aMutations, aObserver) 
-	{
+	onMutation : function FullscreenObserver_onMutation(aMutations, aObserver) {
 		aMutations.forEach(function(aMutation) {
 			if (aMutation.type != 'attributes')
 				return;
@@ -66,8 +61,7 @@ FullscreenObserver.prototype = {
 		}, this);
 	},
 
-	onSizeModeChange : function FullscreenObserver_onSizeModeChange()
-	{
+	onSizeModeChange : function FullscreenObserver_onSizeModeChange() {
 		var w = this.window;
 		var d = w.document;
 		if (d.documentElement.getAttribute('sizemode') != 'fullscreen')
@@ -89,12 +83,68 @@ FullscreenObserver.prototype = {
 	}
 };
 
+function getTabStrip(aTabBrowser) {
+	if (!(aTabBrowser instanceof Ci.nsIDOMElement))
+		return null;
+
+	var strip = aTabBrowser.mStrip;
+	return (strip && strip instanceof Ci.nsIDOMElement) ?
+			strip :
+			this.evaluateXPath(
+				'ancestor::xul:toolbar[1]',
+				aTabBrowser.tabContainer,
+				Ci.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue || aTabBrowser.tabContainer.parentNode;
+}
+var NSResolver = {
+	lookupNamespaceURI : function(aPrefix) {
+		switch (aPrefix) {
+			case 'xul':
+				return 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+			case 'html':
+			case 'xhtml':
+				return 'http://www.w3.org/1999/xhtml';
+			case 'xlink':
+				return 'http://www.w3.org/1999/xlink';
+			default:
+				return '';
+		}
+	}
+};
+function evaluateXPath(aExpression, aContext, aType) {
+	if (!aType)
+		aType = Ci.nsIDOMXPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+	try {
+		var XPathResult = (aContext.ownerDocument || aContext).evaluate(
+				aExpression,
+				(aContext || document),
+				NSResolver,
+				aType,
+				null
+			);
+	}
+	catch(e) {
+		return {
+			singleNodeValue : null,
+			snapshotLength  : 0,
+			snapshotItem    : function() {
+				return null
+			}
+		};
+	}
+	return XPathResult;
+}
+
+function onMozMouseHittest(aEvent) {
+	// block default behaviors of the tab bar (dragging => window move, etc.)
+	aEvent.stopPropagation();
+}
+
 var baseStyles = new WeakMap();
 var platformStyles = new WeakMap();
 var fullscreenObservers = new WeakMap();
 
-function handleWindow(aWindow)
-{
+function handleWindow(aWindow) {
 	var doc = aWindow.document;
 	if (doc.documentElement.getAttribute('windowtype') != TYPE_BROWSER)
 		return;
@@ -105,8 +155,13 @@ function handleWindow(aWindow)
 	platformStyles.set(aWindow, addStyleSheet(platformStyleURL, aWindow));
 	fullscreenObservers.set(aWindow, new FullscreenObserver(aWindow));
 
+	var strip = getTabStrip(aWindow.gBrowser);
+	strip.addEventListener('MozMouseHittest', onMozMouseHittest, true); // to block default behaviors of the tab bar
+
 	aWindow.addEventListener('unload', function onUnload() {
 		aWindow.addEventListener('unload', onUnload, false);
+
+		strip.removeEventListener('MozMouseHittest', onMozMouseHittest, true);
 
 		baseStyles.delete(aWindow);
 		platformStyles.delete(aWindow);
@@ -119,8 +174,7 @@ function handleWindow(aWindow)
 WindowManager.getWindows(TYPE_BROWSER).forEach(handleWindow);
 WindowManager.addHandler(handleWindow);
 
-function shutdown()
-{
+function shutdown() {
 	WindowManager.getWindows(TYPE_BROWSER).forEach(function(aWindow) {
 		aWindow.TabsInTitlebar.allowedBy('tabsOnBottom', true);
 
