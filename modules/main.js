@@ -165,6 +165,25 @@ var baseStyles = new WeakMap();
 var platformStyles = new WeakMap();
 var fullscreenObservers = new WeakMap();
 
+function onUnload(aEvent) {
+	(aEvent.view || aEvent.target.defaultView).addEventListener('unload', onUnload, false);
+	uninitWindow(aWindow);
+}
+
+function uninitWindow(aWindow) {
+	aWindow.removeEventListener('unload', onUnload, false);
+
+	var strip = getTabStrip(aWindow.gBrowser);
+	strip.removeEventListener('MozMouseHittest', onMozMouseHittest, true);
+	strip.removeEventListener('dblclick', onDoubleClick, true);
+
+	baseStyles.delete(aWindow);
+	platformStyles.delete(aWindow);
+
+	fullscreenObservers.get(aWindow).destroy();
+	fullscreenObservers.delete(aWindow);
+}
+
 function handleWindow(aWindow) {
 	var doc = aWindow.document;
 	if (doc.documentElement.getAttribute('windowtype') != TYPE_BROWSER)
@@ -180,18 +199,7 @@ function handleWindow(aWindow) {
 	strip.addEventListener('MozMouseHittest', onMozMouseHittest, true); // to block default behaviors of the tab bar
 	strip.addEventListener('dblclick', onDoubleClick, true);
 
-	aWindow.addEventListener('unload', function onUnload() {
-		aWindow.addEventListener('unload', onUnload, false);
-
-		strip.removeEventListener('MozMouseHittest', onMozMouseHittest, true);
-		strip.removeEventListener('dblclick', onDoubleClick, true);
-
-		baseStyles.delete(aWindow);
-		platformStyles.delete(aWindow);
-
-		fullscreenObservers.get(aWindow).destroy();
-		fullscreenObservers.delete(aWindow);
-	}, false);
+	aWindow.addEventListener('unload', onUnload, false);
 }
 
 WindowManager.getWindows(TYPE_BROWSER).forEach(handleWindow);
@@ -202,13 +210,10 @@ function shutdown() {
 		aWindow.TabsInTitlebar.allowedBy('tabsOnBottom', true);
 
 		aWindow.document.removeChild(baseStyles.get(aWindow));
-		baseStyles.delete(aWindow);
-
 		aWindow.document.removeChild(platformStyles.get(aWindow));
-		platformStyles.delete(aWindow);
 
-		fullscreenObservers.get(aWindow).destroy();
-		fullscreenObservers.delete(aWindow);
+		aWindow.removeEventListener('unload', onUnload, false);
+		uninitWindow(aWindow);
 	});
 
 	WindowManager = undefined;
