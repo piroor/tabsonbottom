@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Opens a new tab by double-click on the blank area on the tab bar. (This is a simulation of the behavior of Firefox 28 and older.)
  - 0.3 (2014.03.29)
    * Works on Firefox 29 and later
  - 0.2 (2013.12.02)
