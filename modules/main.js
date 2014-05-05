@@ -181,6 +181,8 @@ function onUnload(aEvent) {
 function uninitWindow(aWindow) {
 	aWindow.removeEventListener('unload', onUnload, false);
 
+	delete aWindow.TabsOnBottom;
+
 	var strip = getTabStrip(aWindow.gBrowser);
 	strip.removeEventListener('MozMouseHittest', onMozMouseHittest, true);
 	strip.removeEventListener('dblclick', onDoubleClick, true);
@@ -196,6 +198,8 @@ function handleWindow(aWindow) {
 	var doc = aWindow.document;
 	if (doc.documentElement.getAttribute('windowtype') != TYPE_BROWSER)
 		return;
+
+	aWindow.TabsOnBottom = true;
 
 	var allowedByOtherAddons = Boolean(
 			aWindow.TreeStyleTabService
