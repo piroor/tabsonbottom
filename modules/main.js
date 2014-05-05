@@ -197,7 +197,10 @@ function handleWindow(aWindow) {
 	if (doc.documentElement.getAttribute('windowtype') != TYPE_BROWSER)
 		return;
 
-	aWindow.TabsInTitlebar.allowedBy('tabsOnBottom', false);
+	var allowedByOtherAddons = Boolean(
+			aWindow.TreeStyleTabService
+		);
+	aWindow.TabsInTitlebar.allowedBy('tabsOnBottom', allowedByOtherAddons);
 
 	baseStyles.set(aWindow, addStyleSheet(baseStyleURL, aWindow));
 	platformStyles.set(aWindow, addStyleSheet(platformStyleURL, aWindow));
