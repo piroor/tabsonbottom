@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="tabsonbottom@piro.sakura.ne.jp"
                    em:name="Tabs On Bottom"
-                   em:version="0.4"
+                   em:version="0.5"
                    em:creator="YUKI &quot;Piro&quot; Hiroshi"
                    em:description="Applies &quot;Tabs on Bottom&quot; appearance."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/_tabsonbottom.html.en"

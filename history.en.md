@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.5 (2014.05.06)
    * Allow to hide the title bar if Tree Style Tab addon is installed.
  - 0.4 (2014.05.01)
    * Opens a new tab by double-click on the blank area on the tab bar. (This is a simulation of the behavior of Firefox 28 and older.)
