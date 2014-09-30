@@ -87,8 +87,8 @@ FullscreenObserver.prototype = {
 	}
 };
 
-function getTabStrip(aTabBrowser) {
-	if (!(aTabBrowser instanceof Ci.nsIDOMElement))
+function getTabStrip(aTabBrowser, aWindow) {
+	if (!(aTabBrowser instanceof aWindow.Element))
 		return null;
 
 	var strip = aTabBrowser.mStrip;
@@ -183,7 +183,7 @@ function uninitWindow(aWindow) {
 
 	delete aWindow.TabsOnBottom;
 
-	var strip = getTabStrip(aWindow.gBrowser);
+	var strip = getTabStrip(aWindow.gBrowser, aWindow);
 	strip.removeEventListener('MozMouseHittest', onMozMouseHittest, true);
 	strip.removeEventListener('dblclick', onDoubleClick, true);
 
@@ -210,7 +210,7 @@ function handleWindow(aWindow) {
 	platformStyles.set(aWindow, addStyleSheet(platformStyleURL, aWindow));
 	fullscreenObservers.set(aWindow, new FullscreenObserver(aWindow));
 
-	var strip = getTabStrip(aWindow.gBrowser);
+	var strip = getTabStrip(aWindow.gBrowser, aWindow);
 	strip.addEventListener('MozMouseHittest', onMozMouseHittest, true); // to block default behaviors of the tab bar
 	strip.addEventListener('dblclick', onDoubleClick, true);
 
