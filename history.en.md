@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.6 (2016.02.03)
    * Update codes for lately Firefox.
    * Drop support for old Firefox 37 and older.
  - 0.5 (2014.05.06)
