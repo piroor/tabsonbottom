@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Update codes for lately Firefox.
+   * Drop support for old Firefox 37 and older.
  - 0.5 (2014.05.06)
    * Allow to hide the title bar if Tree Style Tab addon is installed.
  - 0.4 (2014.05.01)
