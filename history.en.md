@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 0.7.1 (2016.02.05)
+   * Marked as e10s compatible.
  - 0.7 (2016.02.05)
    * Double click on the blank area of the tab bar opens a new tab correctly, on Nightly 47.0a1.
  - 0.6 (2016.02.03)
