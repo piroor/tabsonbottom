@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 0.7 (2016.02.05)
+   * Double click on the blank area of the tab bar opens a new tab correctly, on Nightly 47.0a1.
  - 0.6 (2016.02.03)
    * Update codes for lately Firefox.
    * Drop support for old Firefox 37 and older.
