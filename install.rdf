@@ -12,7 +12,8 @@
                    em:optionsURL="chrome://tabsonbottom/content/config.xul"
                    em:optionsType="2"
                    em:bootstrap="true"
-                   em:type="2">
+                   em:type="2"
+                   em:multiprocessCompatible="true">
 
 
     <em:updateURL></em:updateURL>
