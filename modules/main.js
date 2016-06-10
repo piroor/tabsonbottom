@@ -68,7 +68,8 @@ FullscreenObserver.prototype = {
 	onSizeModeChange : function FullscreenObserver_onSizeModeChange() {
 		var w = this.window;
 		var d = w.document;
-		if (d.documentElement.getAttribute('sizemode') != 'fullscreen')
+		if (d.documentElement.getAttribute('sizemode') != 'fullscreen' ||
+			!w.FullScreen._safeToCollapse())
 			return;
 
 		var toolbox = w.gNavToolbox;
