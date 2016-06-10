@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Show the toolbox by mousemove correcton, at the fullscreen mode.
  - 0.7.1 (2016.02.05)
    * Marked as e10s compatible.
  - 0.7 (2016.02.05)
