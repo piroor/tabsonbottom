@@ -7,4 +7,5 @@
 #TabsToolbar {
 	-moz-box-ordinal-group: 10000 !important;
 	-moz-window-dragging: default !important;
+	margin-bottom: 0 !important;
 }
