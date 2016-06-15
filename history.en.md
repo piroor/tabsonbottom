@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Define custom style rules safely for each platform.
  - 0.7.2 (2016.06.15)
    * Show the toolbox by mousemove correctly, at the fullscreen mode.
  - 0.7.1 (2016.02.05)
