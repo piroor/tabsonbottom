@@ -16,3 +16,10 @@
 	background: url("chrome://browser/skin/privatebrowsing-mask.png") center no-repeat;
 	width: 30px;
 }
+
+/* The fullscreen toggler can be covered by the tabbar by
+   https://dxr.mozilla.org/mozilla-central/rev/14c5bf11d37b9e92d27f7089d9392de2ac339bb3/browser/themes/linux/browser.css#1522
+   so we have to cancel it. */
+#main-window[inFullscreen] #TabsToolbar {
+	margin-bottom: 0 !important;
+}
